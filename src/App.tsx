@@ -1,25 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import buildGraphQLProvider from "ra-data-graphql-simple";
+import React from "react";
+import { Admin, ListGuesser, Resource } from "react-admin";
 
 function App() {
+  const [dataProvider, setDataProvider] = React.useState<any | null>(null);
+
+  React.useEffect(() => {
+    buildGraphQLProvider({
+      clientOptions: { uri: "http://localhost:4000" },
+    }).then((provider) => setDataProvider(provider));
+  }, []);
+
+  if (!dataProvider) {
+    return <div>Loading</div>;
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Admin dataProvider={dataProvider}>
+      <Resource name="Post" list={ListGuesser} />
+    </Admin>
   );
 }
 
